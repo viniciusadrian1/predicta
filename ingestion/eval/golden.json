@@ -1,0 +1,62 @@
+{
+  "description": "Golden set para o RAG do Predicta (acervo WEG). 'in_corpus' valida fonte+valor; 'out_of_corpus' valida honestidade (deve responder que não encontrou).",
+  "cases": [
+    {
+      "id": "lubrificacao-6314-w22",
+      "query": "Qual o intervalo de relubrificação de um rolamento 6314 num motor W22 TEFC, 4 polos, 60 Hz?",
+      "must_contain": ["12000"],
+      "expect_source_contains": ["W22", "lubrific"],
+      "expect_topic": "lubrificacao"
+    },
+    {
+      "id": "isolamento-tensao-ensaio-4160v",
+      "query": "Qual a tensão de ensaio do megôhmetro para um enrolamento de 4160 V?",
+      "must_contain": ["1000", "2500"],
+      "expect_source_contains": ["isolament"],
+      "expect_topic": "isolamento"
+    },
+    {
+      "id": "pintura-c4",
+      "query": "Qual plano de pintura WEG é indicado para ambiente de corrosividade C4?",
+      "must_contain": ["222"],
+      "expect_source_contains": ["pintura", "TN04"],
+      "expect_topic": "pintura"
+    },
+    {
+      "id": "redimensionamento-carga-corrente",
+      "query": "Por que medir o percentual de carga de um motor pela corrente é incorreto?",
+      "must_contain": ["não-linear", "25"],
+      "expect_source_contains": ["redimension"],
+      "expect_topic": "redimensionamento"
+    },
+    {
+      "id": "vibracao-iec160-grauA",
+      "query": "Qual o limite de severidade de vibração para carcaça IEC 160, grau A?",
+      "must_contain": ["2.2"],
+      "expect_source_contains": ["vibra"],
+      "expect_topic": "vibracao"
+    },
+    {
+      "id": "correcao-potencia-50c-2000m",
+      "query": "Qual o fator de correção de potência a 50 °C e 2000 m de altitude?",
+      "must_contain": ["0,87", "0.87"],
+      "expect_source_contains": ["W22"],
+      "expect_topic": "redimensionamento",
+      "match_any_must_contain": true
+    },
+    {
+      "id": "fora-do-corpus-siemens",
+      "query": "Qual o intervalo de relubrificação de um motor Siemens 1LE0 conforme o manual Siemens?",
+      "out_of_corpus": true,
+      "must_contain": ["não encontrei", "não foi encontrado", "sem fonte", "não consta"],
+      "match_any_must_contain": true
+    },
+    {
+      "id": "fora-do-corpus-preco",
+      "query": "Qual o preço de tabela do motor W22 100 cv?",
+      "out_of_corpus": true,
+      "must_contain": ["não encontrei", "não foi encontrado", "sem fonte", "não consta"],
+      "match_any_must_contain": true
+    }
+  ]
+}

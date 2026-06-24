@@ -1,0 +1,25 @@
+node_modules
+dist
+dist-ssr
+*.local
+
+# Secrets — never commit
+.env
+.env.*
+!.env.example
+
+# Editor / OS
+.DS_Store
+*.log
+.vscode/*
+!.vscode/extensions.json
+.idea
+
+# RAG ingestion — Python venv & caches only (source PDFs and knowledge.json ARE committed)
+ingestion/.venv/
+ingestion/**/__pycache__/
+*.pyc
+
+# Supabase local
+supabase/.branches/
+supabase/.temp/

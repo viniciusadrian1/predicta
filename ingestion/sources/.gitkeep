@@ -1,0 +1,3 @@
+# Coloque os PDFs do acervo (manuais WEG, etc.) NESTA pasta.
+# O pipeline processa todos os .pdf aqui dentro. NÃO versione PDFs grandes/proprietários
+# se não tiver direito — veja .gitignore (ingestion/sources/*.pdf é ignorado por padrão).
