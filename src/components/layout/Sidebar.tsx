@@ -62,7 +62,7 @@ export function Sidebar() {
   return (
     <aside className="w-[220px] h-full flex flex-col flex-shrink-0" style={{ background:C.bgDeep, borderRight:`1px solid ${C.border}` }}>
       {/* Logo */}
-      <div className="px-4 pt-5 pb-4" style={{ borderBottom:`1px solid ${C.border}` }}>
+      <div className="px-4 pt-3 pb-2.5" style={{ borderBottom:`1px solid ${C.border}` }}>
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg flex items-center justify-center relative overflow-hidden" style={{ background:`linear-gradient(135deg,${C.cobalt},${C.navy})` }}>
             <span className="relative z-10"><PredictaMark size={17} variant="white" /></span>
@@ -76,18 +76,18 @@ export function Sidebar() {
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 overflow-y-auto py-3 px-2 space-y-0.5">
+      <nav className="flex-1 overflow-y-auto py-2 px-2 space-y-0.5">
         {NAV.map(g => {
           const items = g.items.filter((it) => visible(it.modulo));
           if (!items.length) return null;
           return (
-          <div key={g.sec} className="mb-2">
-            <div className="px-2 py-1 text-[9px] font-bold tracking-[0.2em] uppercase mb-0.5" style={{ color:C.slate+"60" }}>{g.sec}</div>
+          <div key={g.sec} className="mb-1.5">
+            <div className="px-2 pt-0.5 pb-0.5 text-[9px] font-bold tracking-[0.2em] uppercase" style={{ color:C.slate+"60" }}>{g.sec}</div>
             {items.map(item => {
               const active = item.match(pathname);
               return (
                 <NavLink key={item.to} to={item.to}
-                  className={`w-full flex items-center gap-2.5 px-2.5 py-[7px] rounded-md text-[12px] font-medium mb-0.5 transition-all text-left ${active ? "" : "hover:text-[#DDE6F0]"}`}
+                  className={`w-full flex items-center gap-2.5 px-2.5 py-[5px] rounded-md text-[12px] leading-tight font-medium mb-0.5 transition-all text-left ${active ? "" : "hover:text-[#DDE6F0]"}`}
                   style={active
                     ? { background:`${C.cobalt}22`, border:`1px solid ${C.cobalt}44`, color:C.steel }
                     : { border:"1px solid transparent", color:C.slate }}
@@ -104,7 +104,7 @@ export function Sidebar() {
       </nav>
 
       {/* User */}
-      <div className="p-3" style={{ borderTop:`1px solid ${C.border}` }}>
+      <div className="p-2" style={{ borderTop:`1px solid ${C.border}` }}>
         <NavLink to="/configuracoes" className="flex items-center gap-2.5 p-2 rounded-md hover:bg-[#112035] transition-all cursor-pointer">
           <div className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold text-white flex-shrink-0" style={{ background:`linear-gradient(135deg,${C.cobalt},${C.navy})` }}>{initials(session.nome)}</div>
           <div className="flex-1 min-w-0">
