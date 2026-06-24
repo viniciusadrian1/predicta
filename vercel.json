@@ -1,0 +1,14 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "vite",
+  "buildCommand": "vite build",
+  "outputDirectory": "dist",
+  "functions": {
+    "api/assistant.ts": { "maxDuration": 60 },
+    "api/vision-ocr.ts": { "maxDuration": 60 },
+    "api/rag.ts": { "maxDuration": 60, "includeFiles": "server/rag/knowledge.json" }
+  },
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
