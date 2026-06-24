@@ -71,6 +71,14 @@ export const ASSISTANT_TOOLS = [
       parameters: { type: "object", properties: {} },
     },
   },
+  {
+    type: "function",
+    function: {
+      name: "consultar_base_tecnica",
+      description: "Consulta os MANUAIS TÉCNICOS do fabricante (RAG) e responde com base nos documentos, citando a fonte (documento/seção/página) e o nível de confiança. Use SEMPRE que a pergunta for sobre especificações de manual: intervalos de lubrificação/relubrificação, torques, tensões de ensaio (megôhmetro), planos de pintura, fatores de correção, rolamentos, carcaças, motores WEG (W21/W22) etc. NÃO responda esse tipo de pergunta de memória.",
+      parameters: { type: "object", properties: { pergunta: { type: "string", description: "A pergunta técnica, em português, a ser respondida a partir dos manuais." } }, required: ["pergunta"] },
+    },
+  },
 ];
 
 export function executeTool(name: string, input: Record<string, unknown>): unknown {

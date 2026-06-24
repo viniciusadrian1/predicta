@@ -132,6 +132,7 @@ export default function Assistente() {
       `Responda SEMPRE em português do Brasil, de forma técnica, objetiva e concisa. Use **negrito** para destacar termos-chave. ` +
       `Você tem ferramentas para consultar o estado dos gêmeos digitais, listar alertas, rodar simulações "e se" e criar ordens de serviço — ` +
       `use-as para obter dados atuais em vez de inventar números. Nunca invente métricas; chame a ferramenta apropriada. ` +
+      `Para perguntas sobre especificações de manuais do fabricante (lubrificação, torque, tensão de ensaio, rolamentos, planos de pintura, motores WEG W21/W22 etc.), use SEMPRE a ferramenta consultar_base_tecnica e NÃO responda de memória. ` +
       `A predição de falha vem de um gêmeo digital com modelo de degradação simulado (físico-informado), não de um modelo treinado em falhas reais.\n\n` +
       `Data/hora simulada atual: ${fmtDateTime(st.simClock)}.\n`;
     if (asset && twin) {
@@ -181,10 +182,34 @@ export default function Assistente() {
     const next: ChatMessage[] = [...messages, assistantMsg];
 
     if (r.finishReason === "tool_calls" && r.toolCalls.length && depth < 5) {
-      setBubbles((prev) => [...prev, { role: "tool", text: `Consultou: ${r.toolCalls.map((t) => t.name).join(", ")}` }]);
-      const toolMsgs: ChatMessage[] = r.toolCalls.map((tc) => ({ role: "tool", tool_call_id: tc.id, content: JSON.stringify(executeTool(tc.name, tc.input)) }));
+      setBubbles((prev) => [...prev, { role: "tool", text: `Consultou: ${r.toolCalls.map((t) => t.name === "consultar_base_tecnica" ? "base técnica" : t.name).join(", ")}` }]);
+      const lastUser = [...messages].reverse().find((m) => m.role === "user");
+      const toolMsgs: ChatMessage[] = [];
+      let ragAnswered = false;
+      for (const tc of r.toolCalls) {
+        if (tc.name === "consultar_base_tecnica") {
+          // Resposta fundamentada nos manuais técnicos (cite-or-refuse + confiança).
+          try {
+            const pergunta = String((tc.input as { pergunta?: string }).pergunta ?? "").trim() || String(lastUser?.content ?? "");
+            const res = await queryRag(pergunta, { role: session.papel, signal: abortRef.current?.signal });
+            setBubbles((prev) => [...prev, { role: "ai", text: res.answer, citations: res.citations, confidence: res.confidence, noSource: res.citations.length === 0 }]);
+            toolMsgs.push({ role: "tool", tool_call_id: tc.id, content: JSON.stringify({ answer: res.answer, confidence: res.confidence, citations: res.citations.map((c) => ({ doc: c.doc_title, secao: c.section, pagina: c.page })) }) });
+            ragAnswered = true;
+          } catch (e) {
+            if ((e as { name?: string })?.name === "AbortError") { setBusy(false); return; }
+            const m = e instanceof Error ? e.message : "Falha ao consultar a base técnica.";
+            setBubbles((prev) => [...prev, { role: "ai", text: "⚠️ " + m }]);
+            toolMsgs.push({ role: "tool", tool_call_id: tc.id, content: JSON.stringify({ erro: m }) });
+            ragAnswered = true;
+          }
+        } else {
+          toolMsgs.push({ role: "tool", tool_call_id: tc.id, content: JSON.stringify(executeTool(tc.name, tc.input)) });
+        }
+      }
       convoRef.current = [...next, ...toolMsgs];
       saveActive();
+      // O RAG já produziu a resposta fundamentada e citada — ela É a resposta final.
+      if (ragAnswered) { setBusy(false); saveActive(); return; }
       await runTurn([...next, ...toolMsgs], depth + 1);
       return;
     }

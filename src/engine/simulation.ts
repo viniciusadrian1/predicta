@@ -99,6 +99,7 @@ export function evaluateAlerts(
   for (const asset of assets) {
     const twin = twins[asset.id];
     if (!twin) continue;
+    try {
 
     // ── Connectivity ──
     if (asset.offline) {
@@ -130,13 +131,15 @@ export function evaluateAlerts(
 
       if (breachAlert) {
         const sev: Severity = breachCrit ? "critico" : "alto";
-        if (!open && !snoozed(asset.id, (a) => a.tag === tag.key && a.origem === "regra")) {
-          alerts = [{
-            id: newId(), assetId: asset.id, titulo: RULE_TITLE[tag.key], tipo: RULE_TIPO[tag.key],
-            severidade: sev, status: "aberto", criadoEm: simClock,
-            descricao: ruleDesc(asset, tag, v, breachCrit ? limCritico : limAlerta, breachCrit),
-            origem: "regra", tag: tag.key, managed: true,
-          }, ...alerts];
+        if (!open) {
+          if (!snoozed(asset.id, (a) => a.tag === tag.key && a.origem === "regra")) {
+            alerts = [{
+              id: newId(), assetId: asset.id, titulo: RULE_TITLE[tag.key], tipo: RULE_TIPO[tag.key],
+              severidade: sev, status: "aberto", criadoEm: simClock,
+              descricao: ruleDesc(asset, tag, v, breachCrit ? limCritico : limAlerta, breachCrit),
+              origem: "regra", tag: tag.key, managed: true,
+            }, ...alerts];
+          }
         } else if (open.managed && open.severidade !== "critico" && sev === "critico") {
           alerts = alerts.map((a) => a.id === open.id
             ? { ...a, severidade: "critico", descricao: ruleDesc(asset, tag, v, limCritico, true) } : a);
@@ -160,6 +163,10 @@ export function evaluateAlerts(
       }
     } else if (openModel && openModel.managed && prob21 < 0.4) {
       alerts = alerts.map((a) => a.id === openModel.id ? { ...a, status: "resolvido", resolvidoEm: simClock } : a);
+    }
+    } catch (err) {
+      // Defesa: um alerta/twin malformado de UM ativo nunca pode derrubar o app inteiro.
+      if (import.meta.env?.DEV) console.error("evaluateAlerts: ativo ignorado por erro", asset.id, err);
     }
   }
 
