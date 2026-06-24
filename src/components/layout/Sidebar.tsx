@@ -5,9 +5,9 @@
 
 import { NavLink, useLocation } from "react-router";
 import {
-  LayoutDashboard, Activity, Cpu, Map, Bell, MessageSquare,
+  LayoutDashboard, Activity, Map, Bell, MessageSquare, Factory,
   PlusCircle, ScanLine, SlidersHorizontal, GitBranch, Layers, BookOpen,
-  Key, Settings, Boxes, History, ClipboardList,
+  Key, Settings, History, ClipboardList,
 } from "lucide-react";
 import { C } from "@/lib/theme";
 import { PredictaMark } from "@/components/brand/Logo";
@@ -26,9 +26,8 @@ const NAV: { sec: string; items: Item[] }[] = [
     { l:"Painel Operacional", i:Activity,        to:"/operacional", modulo:"Dashboard", match: exact("/operacional") },
   ]},
   { sec:"ATIVOS", items:[
-    { l:"Lista de Ativos", i:Cpu,   to:"/ativos", modulo:"Ativos", match: (p)=> p.startsWith("/ativos") && !p.endsWith("/gemeo") },
-    { l:"Gêmeo Digital",   i:Boxes, to:"/gemeo",  modulo:"Ativos", match: (p)=> p === "/gemeo" || p.endsWith("/gemeo") },
-    { l:"Mapa da Planta",  i:Map,   to:"/mapa",   modulo:"Mapa",   match: exact("/mapa") },
+    { l:"Lista de Plantas", i:Factory, to:"/plantas", modulo:"Ativos", match: (p)=> p.startsWith("/plantas") || p.startsWith("/ativos") },
+    { l:"Mapa da Planta",   i:Map,     to:"/mapa",    modulo:"Mapa",   match: exact("/mapa") },
   ]},
   { sec:"ALERTAS & MANUTENÇÃO", items:[
     { l:"Alertas", i:Bell, to:"/alertas", modulo:"Alertas", badge:true, match: (p)=> p.startsWith("/alertas") },

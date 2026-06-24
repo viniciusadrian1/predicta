@@ -19,6 +19,8 @@ import Landing from "@/pages/Landing";
 import Dashboard from "@/pages/Dashboard";
 import Painel from "@/pages/Painel";
 import AtivosLista from "@/pages/AtivosLista";
+import ListaPlantas from "@/pages/ListaPlantas";
+import PlantaDetail from "@/pages/PlantaDetail";
 import AtivoDetail from "@/pages/AtivoDetail";
 import AtivoOverview from "@/pages/ativo/Overview";
 import AtivoTelemetria from "@/pages/ativo/Telemetria";
@@ -54,6 +56,10 @@ export const router = createBrowserRouter([
           { path: "dashboard", element: <Dashboard /> },
           { path: "operacional", element: <Painel /> },
 
+          { path: "plantas", element: <ListaPlantas /> },
+          { path: "plantas/:planta", element: <PlantaDetail /> },
+          // Back-compat: a antiga Lista de Ativos e o Gêmeo global saíram da sidebar,
+          // mas as rotas seguem válidas (links antigos, deep-links, drawer de ativos).
           { path: "ativos", element: <AtivosLista /> },
           { path: "gemeo", element: <GemeoRedirect /> },
           {
